@@ -10,11 +10,11 @@ function isTestAttributeNode(node) {
   )
 }
 
-function isCyQueryCommandExpression(node) {
+function isCyQueryCommandExpression(queryCommands, node) {
   return (
     node.callee.type === 'MemberExpression' &&
     node.callee.property.type === 'Identifier' &&
-    node.callee.property.name === 'get'
+    queryCommands.includes(node.callee.property.name)
   )
 }
 
@@ -64,15 +64,28 @@ function findTestAttributes(source) {
   return testIds
 }
 
-function findTestQueries(source) {
+/**
+ * @typedef {Object} FindQueriesOptions
+ * @property {string[]?} commands Names of custom commands to look for
+ */
+
+/**
+ * Parses the given spec source code and finds all queried test id values.
+ * @param {string} source The spec source code
+ * @param {FindQueriesOptions} options Options controlling what to look for
+ */
+function findTestQueries(source, options = {}) {
   const testIds = []
 
   const ast = babel.parse(source)
 
+  const queryCommands = ['get', 'find', ...(options.commands || [])]
+  console.log('query commands to find', queryCommands)
+
   babel.traverse(ast, {
     CallExpression(a) {
       console.log('CallExpression')
-      if (isCyQueryCommandExpression(a.node)) {
+      if (isCyQueryCommandExpression(queryCommands, a.node)) {
         // console.log(a.node)
         if (isCyTestAttributeSelector(a.node.arguments[0])) {
           const testId = extractTestId(a.node.arguments[0].value)
