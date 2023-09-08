@@ -1,4 +1,4 @@
-# changed-test-ids
+# changed-test-ids [![main](https://github.com/bahmutov/changed-test-ids/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/bahmutov/changed-test-ids/actions/workflows/ci.yml)
 
 > Select tests to run based on source file changes and test ids
 
