@@ -1,7 +1,7 @@
 {
   "name": "changed-test-ids",
   "version": "1.0.0",
-  "description": "",
+  "description": "Select tests to run based on source file changes and test ids",
   "main": "src/index.js",
   "files": [
     "src"
@@ -10,8 +10,11 @@
     "test": "ava",
     "test:watch": "ava -w"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "cypress-plugin",
+    "testing"
+  ],
+  "author": "Gleb Bahmutov <gleb.bahmutov@gmail.com>",
   "license": "ISC",
   "devDependencies": {
     "ava": "^5.3.1",
