@@ -1,3 +1,4 @@
+const debug = require('debug')('changed-test-ids')
 const babel = require('@babel/core')
 
 // console.log(babel)
@@ -43,18 +44,16 @@ function findTestAttributes(source) {
     plugins: ['@babel/plugin-syntax-jsx'],
   })
 
-  // console.log(ast.program.body)
-
   const testIds = []
 
   babel.traverse(ast, {
     JSXElement(a) {
-      // console.log('JSXElement')
-      // console.log(a.node.openingElement.attributes)
+      // debug('JSXElement')
+      // debug(a.node.openingElement.attributes)
       a.node.openingElement.attributes.forEach((node) => {
         if (isTestAttributeNode(node)) {
           const testId = node.value.value
-          console.log('found test id "%s"', testId)
+          debug('found test id "%s"', testId)
           testIds.push(testId)
         }
       })
@@ -80,16 +79,15 @@ function findTestQueries(source, options = {}) {
   const ast = babel.parse(source)
 
   const queryCommands = ['get', 'find', ...(options.commands || [])]
-  console.log('query commands to find', queryCommands)
+  debug('query commands to find', queryCommands)
 
   babel.traverse(ast, {
     CallExpression(a) {
-      console.log('CallExpression')
+      debug('CallExpression')
       if (isCyQueryCommandExpression(queryCommands, a.node)) {
-        // console.log(a.node)
         if (isCyTestAttributeSelector(a.node.arguments[0])) {
           const testId = extractTestId(a.node.arguments[0].value)
-          console.log('found query test id "%s"', testId)
+          debug('found query test id "%s"', testId)
           testIds.push(testId)
         }
       }
