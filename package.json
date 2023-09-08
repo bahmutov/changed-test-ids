@@ -2,9 +2,13 @@
   "name": "changed-test-ids",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/index.js",
+  "files": [
+    "src"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "ava",
+    "test:watch": "ava -w"
   },
   "keywords": [],
   "author": "",
@@ -15,6 +19,7 @@
     "prettier": "^3.0.3"
   },
   "dependencies": {
-    "@babel/core": "^7.22.17"
+    "@babel/core": "^7.22.17",
+    "@babel/plugin-syntax-jsx": "^7.22.5"
   }
 }
