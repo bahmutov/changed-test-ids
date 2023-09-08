@@ -3,11 +3,11 @@ const babel = require('@babel/core')
 
 // console.log(babel)
 
-function isTestAttributeNode(node) {
+function isTestAttributeNode(names, node) {
   return (
     node.type === 'JSXAttribute' &&
     node.name.type === 'JSXIdentifier' &&
-    node.name.name === 'testId'
+    names.includes(node.name.name)
   )
 }
 
@@ -39,10 +39,20 @@ function extractTestId(s) {
   }
 }
 
-function findTestAttributes(source) {
+function findTestAttributes(source, options = {}) {
   const ast = babel.parse(source, {
     plugins: ['@babel/plugin-syntax-jsx'],
   })
+
+  const attributes = [
+    'testId',
+    'data-cy',
+    'data-test',
+    'data-test-id',
+    'data-testId',
+    ...(options.attributes || []),
+  ]
+  debug('test attributes to find', attributes)
 
   const testIds = []
 
@@ -51,7 +61,7 @@ function findTestAttributes(source) {
       // debug('JSXElement')
       // debug(a.node.openingElement.attributes)
       a.node.openingElement.attributes.forEach((node) => {
-        if (isTestAttributeNode(node)) {
+        if (isTestAttributeNode(attributes, node)) {
           const testId = node.value.value
           debug('found test id "%s"', testId)
           testIds.push(testId)
