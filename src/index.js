@@ -60,7 +60,7 @@ function findTestAttributes(source) {
     },
   })
 
-  return testIds
+  return testIds.sort()
 }
 
 /**
@@ -94,7 +94,7 @@ function findTestQueries(source, options = {}) {
     },
   })
 
-  return testIds
+  return testIds.sort()
 }
 
 module.exports = { findTestAttributes, findTestQueries }

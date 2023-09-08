@@ -2,6 +2,10 @@
 
 > Select tests to run based on source file changes and test ids
 
+## Output
+
+List of data test ids, sorted alphabetically
+
 ## Debugging
 
 This module uses [debug](https://github.com/debug-js/debug#readme) to output verbose logs. To see the logs, run with the following environment variable `DEBUG=changed-test-ids`
