@@ -26,5 +26,6 @@ test('finds two test id attributes', (t) => {
     </>
   `
   const found = findTestAttributes(source)
-  t.deepEqual(found, ['greeting', 'count'])
+  // the list is sorted alphabetically
+  t.deepEqual(found, ['count', 'greeting'])
 })

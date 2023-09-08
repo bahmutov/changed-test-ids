@@ -1,3 +1,4 @@
+const debug = require('debug')('changed-test-ids')
 const babel = require('@babel/core')
 
 // console.log(babel)
@@ -10,11 +11,11 @@ function isTestAttributeNode(node) {
   )
 }
 
-function isCyQueryCommandExpression(node) {
+function isCyQueryCommandExpression(queryCommands, node) {
   return (
     node.callee.type === 'MemberExpression' &&
     node.callee.property.type === 'Identifier' &&
-    node.callee.property.name === 'get'
+    queryCommands.includes(node.callee.property.name)
   )
 }
 
@@ -43,47 +44,57 @@ function findTestAttributes(source) {
     plugins: ['@babel/plugin-syntax-jsx'],
   })
 
-  // console.log(ast.program.body)
-
   const testIds = []
 
   babel.traverse(ast, {
     JSXElement(a) {
-      // console.log('JSXElement')
-      // console.log(a.node.openingElement.attributes)
+      // debug('JSXElement')
+      // debug(a.node.openingElement.attributes)
       a.node.openingElement.attributes.forEach((node) => {
         if (isTestAttributeNode(node)) {
           const testId = node.value.value
-          console.log('found test id "%s"', testId)
+          debug('found test id "%s"', testId)
           testIds.push(testId)
         }
       })
     },
   })
 
-  return testIds
+  return testIds.sort()
 }
 
-function findTestQueries(source) {
+/**
+ * @typedef {Object} FindQueriesOptions
+ * @property {string[]?} commands Names of custom commands to look for
+ */
+
+/**
+ * Parses the given spec source code and finds all queried test id values.
+ * @param {string} source The spec source code
+ * @param {FindQueriesOptions} options Options controlling what to look for
+ */
+function findTestQueries(source, options = {}) {
   const testIds = []
 
   const ast = babel.parse(source)
 
+  const queryCommands = ['get', 'find', ...(options.commands || [])]
+  debug('query commands to find', queryCommands)
+
   babel.traverse(ast, {
     CallExpression(a) {
-      console.log('CallExpression')
-      if (isCyQueryCommandExpression(a.node)) {
-        // console.log(a.node)
+      debug('CallExpression')
+      if (isCyQueryCommandExpression(queryCommands, a.node)) {
         if (isCyTestAttributeSelector(a.node.arguments[0])) {
           const testId = extractTestId(a.node.arguments[0].value)
-          console.log('found query test id "%s"', testId)
+          debug('found query test id "%s"', testId)
           testIds.push(testId)
         }
       }
     },
   })
 
-  return testIds
+  return testIds.sort()
 }
 
 module.exports = { findTestAttributes, findTestQueries }

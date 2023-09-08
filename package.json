@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@babel/core": "^7.22.17",
-    "@babel/plugin-syntax-jsx": "^7.22.5"
+    "@babel/plugin-syntax-jsx": "^7.22.5",
+    "debug": "^4.3.4"
   }
 }
