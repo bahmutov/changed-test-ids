@@ -1,6 +1,6 @@
 const test = require('ava')
 const { stripIndent } = require('common-tags')
-const { findTestAttributes } = require('..')
+const { findTestAttributes } = require('../src')
 
 test('finds no test id attributes', (t) => {
   const source = stripIndent`
