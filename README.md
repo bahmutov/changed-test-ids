@@ -2,6 +2,12 @@
 
 > Select tests to run based on source file changes and test ids
 
+## API
+
+- `findTestQueries`
+- `findTestAttributes`
+- `findTestAttributesInFile`
+
 ## Output
 
 List of data test ids, sorted alphabetically

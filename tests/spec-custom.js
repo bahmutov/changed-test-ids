@@ -4,7 +4,7 @@ const { findTestQueries } = require('../src')
 
 test('finds custom query command', (t) => {
   const source = stripIndent`
-    cy.getByTestId('[data-test=greeting]')
+    cy.getByTestId('greeting')
   `
   const found = findTestQueries(source, {
     commands: ['getByTestId'],
