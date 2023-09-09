@@ -12,7 +12,16 @@ function isTestAttributeNode(names, node) {
   )
 }
 
-function isCyQueryCommandExpression(queryCommands, node) {
+function isCyQueryCommandExpression(node) {
+  const queries = ['get', 'find']
+  return (
+    node.callee.type === 'MemberExpression' &&
+    node.callee.property.type === 'Identifier' &&
+    queries.includes(node.callee.property.name)
+  )
+}
+
+function isCyCustomQueryExpression(queryCommands, node) {
   return (
     node.callee.type === 'MemberExpression' &&
     node.callee.property.type === 'Identifier' &&
@@ -38,6 +47,8 @@ function extractTestId(s) {
       return s.split('data-test=')[1]
     }
   }
+
+  return s
 }
 
 function findTestAttributes(source, options = {}) {
@@ -89,18 +100,24 @@ function findTestQueries(source, options = {}) {
 
   const ast = babel.parse(source)
 
-  const queryCommands = ['get', 'find', ...(options.commands || [])]
+  const queryCommands = [...(options.commands || [])]
   debug('query commands to find', queryCommands)
 
   babel.traverse(ast, {
     CallExpression(a) {
       debug('CallExpression')
-      if (isCyQueryCommandExpression(queryCommands, a.node)) {
+      if (isCyQueryCommandExpression(a.node)) {
+        debug('it is a cy built-in query command')
         if (isCyTestAttributeSelector(a.node.arguments[0])) {
           const testId = extractTestId(a.node.arguments[0].value)
           debug('found query test id "%s"', testId)
           testIds.push(testId)
         }
+      } else if (isCyCustomQueryExpression(queryCommands, a.node)) {
+        debug('it is a custom query command')
+        const testId = a.node.arguments[0].value
+        debug('found query test id "%s"', testId)
+        testIds.push(testId)
       }
     },
   })
@@ -117,8 +134,19 @@ function findTestAttributesInFile(filename) {
   return findTestAttributes(source)
 }
 
+/**
+ * Finds data test ids used in the Cypress spec file
+ * @param {string} filename The filename to read
+ * @param {FindQueriesOptions} options Options controlling what to look for
+ */
+function findTestQueriesInFile(filename, options = {}) {
+  const source = fs.readFileSync(filename, 'utf8')
+  return findTestQueries(source, options)
+}
+
 module.exports = {
   findTestQueries,
+  findTestQueriesInFile,
   findTestAttributes,
   findTestAttributesInFile,
 }
