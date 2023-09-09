@@ -1,5 +1,6 @@
 const debug = require('debug')('changed-test-ids')
 const babel = require('@babel/core')
+const fs = require('fs')
 
 // console.log(babel)
 
@@ -107,4 +108,17 @@ function findTestQueries(source, options = {}) {
   return testIds.sort()
 }
 
-module.exports = { findTestAttributes, findTestQueries }
+/**
+ * Finds data test ids used in JSX source file
+ * @param {string} filename The filename to read
+ */
+function findTestAttributesInFile(filename) {
+  const source = fs.readFileSync(filename, 'utf8')
+  return findTestAttributes(source)
+}
+
+module.exports = {
+  findTestQueries,
+  findTestAttributes,
+  findTestAttributesInFile,
+}
