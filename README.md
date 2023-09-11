@@ -5,8 +5,10 @@
 ## API
 
 - `findTestQueries`
+- `findTestQueriesInFile`
 - `findTestAttributes`
 - `findTestAttributesInFile`
+- `findTestAttributesInFiles`
 
 ## Output
 
