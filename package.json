@@ -1,6 +1,6 @@
 {
   "name": "changed-test-ids",
-  "version": "1.0.0",
+  "version": "0.0.0-development",
   "description": "Select tests to run based on source file changes and test ids",
   "main": "src/index.js",
   "files": [
@@ -8,7 +8,8 @@
   ],
   "scripts": {
     "test": "ava",
-    "test:watch": "ava -w"
+    "test:watch": "ava -w",
+    "semantic-release": "semantic-release"
   },
   "keywords": [
     "cypress-plugin",
@@ -19,11 +20,16 @@
   "devDependencies": {
     "ava": "^5.3.1",
     "common-tags": "^1.8.2",
-    "prettier": "^3.0.3"
+    "prettier": "^3.0.3",
+    "semantic-release": "^21.1.1"
   },
   "dependencies": {
     "@babel/core": "^7.22.17",
     "@babel/plugin-syntax-jsx": "^7.22.5",
     "debug": "^4.3.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bahmutov/changed-test-ids.git"
   }
 }
