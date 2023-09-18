@@ -112,7 +112,7 @@ function findTestQueries(source, options = {}) {
 
   babel.traverse(ast, {
     CallExpression(a) {
-      debug('CallExpression')
+      // debug('CallExpression')
       if (isCyQueryCommandExpression(a.node)) {
         debug('it is a cy built-in query command')
         if (isCyTestAttributeSelector(a.node.arguments[0])) {

@@ -10,8 +10,11 @@ const args = arg({
   '--sources': String,
   // find test ids in the spec files
   '--specs': String,
-  // (optional) spec custom command to look for
+  // (optional) spec custom command(s) to look for
   '--command': String,
+
+  // aliases
+  '--commands': '--command',
 })
 
 debug('arguments %o', args)
@@ -68,7 +71,8 @@ if (args['--specs']) {
     }
     if (args['--command']) {
       debug('will look for custom command %s', args['--command'])
-      options.commands.push(args['--command'])
+      const commands = args['--command'].split(',').filter(Boolean)
+      options.commands.push(...commands)
     }
     const testIds = findTestQueriesInFiles(specFiles, options)
     debug('found %d test ids across %d specs', testIds.length, specFiles.length)
