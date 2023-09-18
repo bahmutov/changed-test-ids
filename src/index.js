@@ -162,9 +162,28 @@ function findTestQueriesInFile(filename, options = {}) {
   return findTestQueries(source, options)
 }
 
+/**
+ * Finds data test ids used in spec files.
+ * The attributes are unique and alphabetically sorted
+ * @param {string[]} filenames The spec filenames to read
+ * @param {FindQueriesOptions} options Options controlling what to look for
+ */
+function findTestQueriesInFiles(filenames, options = {}) {
+  const names = new Set()
+  filenames.forEach((filename) => {
+    const ids = findTestQueriesInFile(filename, options)
+    ids.forEach((testId) => {
+      names.add(testId)
+    })
+  })
+  const ids = [...names].sort()
+  return ids
+}
+
 module.exports = {
   findTestQueries,
   findTestQueriesInFile,
+  findTestQueriesInFiles,
   findTestAttributes,
   findTestAttributesInFile,
   findTestAttributesInFiles,

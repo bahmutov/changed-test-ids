@@ -6,6 +6,7 @@
 
 - `findTestQueries`
 - `findTestQueriesInFile`
+- `findTestQueriesInFiles`
 - `findTestAttributes`
 - `findTestAttributesInFile`
 - `findTestAttributesInFiles`
@@ -23,6 +24,16 @@ $ npx find-ids --sources 'glob pattern to the JSX files'
 ```
 
 Outputs the sorted list of test attributes, one per line. For example, use `npm run demo:sources`
+
+### Find test ids used in Cypress specs
+
+Let's look through the Cypress specs for custom command `cy.getById` and find all unique arguments
+
+```
+$ npx find-ids --specs 'glob pattern to the Cypress specs' --command getById
+```
+
+Outputs the sorted list of test attributes, one per line. For example, use `npm run demo:specs`
 
 ## Debugging
 
