@@ -14,6 +14,16 @@
 
 List of data test ids, sorted alphabetically
 
+## CLI
+
+### Find test ids in the source files
+
+```
+$ npx find-ids --sources 'glob pattern to the JSX files'
+```
+
+Outputs the sorted list of test attributes, one per line. For example, use `npm run demo:sources`
+
 ## Debugging
 
 This module uses [debug](https://github.com/debug-js/debug#readme) to output verbose logs. To see the logs, run with the following environment variable `DEBUG=changed-test-ids`
