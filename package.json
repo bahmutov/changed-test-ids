@@ -16,7 +16,8 @@
     "semantic-release": "semantic-release",
     "demo:sources": "DEBUG=changed-test-ids node ./bin/find-ids --sources 'tests/fixtures/*.jsx'",
     "demo:specs": "DEBUG=changed-test-ids node ./bin/find-ids --specs 'tests/fixtures/*.cy.js' --command getTest,findById",
-    "demo:warn": "DEBUG=changed-test-ids node ./bin/find-ids --sources 'tests/fixtures/*.jsx' --specs 'tests/fixtures/*.cy.js' --command getTest,findById"
+    "demo:warn": "DEBUG=changed-test-ids node ./bin/find-ids --sources 'tests/fixtures/*.jsx' --specs 'tests/fixtures/*.cy.js' --command getTest,findById",
+    "demo:changed": "DEBUG=changed-test-ids node ./bin/find-ids --branch main --sources 'tests/fixtures/*.jsx' --specs 'tests/fixtures/*.cy.js' --command getTest,findById"
   },
   "keywords": [
     "cypress-plugin",
@@ -35,7 +36,9 @@
     "@babel/plugin-syntax-jsx": "^7.22.5",
     "arg": "^5.0.2",
     "debug": "^4.3.4",
-    "globby": "^11.1.0"
+    "globby": "^11.1.0",
+    "pluralize": "^8.0.0",
+    "shelljs": "^0.8.5"
   },
   "repository": {
     "type": "git",
