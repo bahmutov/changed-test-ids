@@ -53,6 +53,8 @@ You can automatically compute which specs use the test ids from the changed sour
 $ npx find-ids --sources ... --specs ... --command ... --branch <compare against branch name>
 ```
 
+If running on GitHub Actions, you can set the detected spec filenames as outputs by adding `--set-gha-outputs`. This sets the output variables `specsToRun` (comma-separated list of specs) and `specsToRunN` (number of specs found based on test ids in the changed source files).
+
 ## Debugging
 
 This module uses [debug](https://github.com/debug-js/debug#readme) to output verbose logs. To see the logs, run with the following environment variable `DEBUG=changed-test-ids`
