@@ -35,6 +35,16 @@ $ npx find-ids --specs 'glob pattern to the Cypress specs' --command getById
 
 Outputs the sorted list of test attributes, one per line. For example, use `npm run demo:specs`. You can use several custom commands, separate them using commas `--commands getById,containsByTest`
 
+### Warn on untested ids
+
+If you specify both sources and specs, then it will find all test ids used in the source files NOT used by the specs and list them one at a time
+
+```
+$ npx find-ids --sources ... --specs ... --command ...
+⚠️ found 1 test id(s) not covered by any specs
+name
+```
+
 ## Debugging
 
 This module uses [debug](https://github.com/debug-js/debug#readme) to output verbose logs. To see the logs, run with the following environment variable `DEBUG=changed-test-ids`

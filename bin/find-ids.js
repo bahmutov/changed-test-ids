@@ -19,6 +19,11 @@ const args = arg({
 
 debug('arguments %o', args)
 
+const testIdsInSourceFiles = []
+const testIdsInSpecs = []
+
+const warnMode = args['--sources'] && args['--specs']
+
 if (args['--sources']) {
   debug('finding test ids in the sources "%s"', args['--sources'])
   const sourceFiles = globby.sync(args['--sources'], {
@@ -47,9 +52,13 @@ if (args['--sources']) {
         sourceFiles.length,
       )
     } else {
-      testIds.forEach((testId) => {
-        console.log(testId)
-      })
+      if (!warnMode) {
+        // will report test ids later
+        testIds.forEach((testId) => {
+          console.log(testId)
+        })
+      }
+      testIdsInSourceFiles.push(...testIds)
     }
   }
 }
@@ -79,9 +88,32 @@ if (args['--specs']) {
     if (!testIds.length) {
       console.log('Could not find any test ids in %d specs', specFiles.length)
     } else {
-      testIds.forEach((testId) => {
-        console.log(testId)
-      })
+      if (!warnMode) {
+        // will report test ids later
+        testIds.forEach((testId) => {
+          console.log(testId)
+        })
+      }
+      testIdsInSpecs.push(...testIds)
     }
+  }
+}
+
+if (warnMode) {
+  debug(
+    'comparing %d test ids in the source files with %d test ids in specs',
+    testIdsInSourceFiles.length,
+    testIdsInSpecs.length,
+  )
+  const diff = testIdsInSourceFiles.filter(
+    (testId) => !testIdsInSpecs.includes(testId),
+  )
+  if (!diff.length) {
+    console.log('✅ all test ids in the source files were used in specs')
+  } else {
+    console.log('⚠️ found %d test id(s) not covered by any specs', diff.length)
+    diff.forEach((testId) => {
+      console.log(testId)
+    })
   }
 }

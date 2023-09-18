@@ -16,6 +16,12 @@ jobs:
       - name: Demo finding test ids in source files
         run: npm run demo:sources
 
+      - name: Demo finding test ids in specs
+        run: npm run demo:specs
+
+      - name: Demo warning about untested ids
+        run: npm run demo:warn
+
   release:
     runs-on: ubuntu-20.04
     needs: test
