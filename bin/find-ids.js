@@ -12,6 +12,10 @@ const args = arg({
   '--specs': String,
   // (optional) spec custom command(s) to look for
   '--command': String,
+  // search the files that have changed against this Git branch
+  '--branch': String,
+  // search the files that have changed against the parent of the branch
+  '--parent': Boolean,
 
   // aliases
   '--commands': '--command',
@@ -23,6 +27,9 @@ const testIdsInSourceFiles = []
 const testIdsInSpecs = []
 
 const warnMode = args['--sources'] && args['--specs']
+const changedMode = warnMode && args['--branch']
+
+debug('modes %o', { warnMode, changedMode })
 
 if (args['--sources']) {
   debug('finding test ids in the sources "%s"', args['--sources'])
