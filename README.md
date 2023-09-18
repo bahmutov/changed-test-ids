@@ -45,6 +45,14 @@ $ npx find-ids --sources ... --specs ... --command ...
 name
 ```
 
+### Specs to run based on Git changes
+
+You can automatically compute which specs use the test ids from the changed source in the current branch.
+
+```
+$ npx find-ids --sources ... --specs ... --command ... --branch <compare against branch name>
+```
+
 ## Debugging
 
 This module uses [debug](https://github.com/debug-js/debug#readme) to output verbose logs. To see the logs, run with the following environment variable `DEBUG=changed-test-ids`

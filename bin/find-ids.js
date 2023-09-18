@@ -3,7 +3,11 @@
 const arg = require('arg')
 const debug = require('debug')('changed-test-ids')
 const globby = require('globby')
-const { findTestAttributesInFiles, findTestQueriesInFiles } = require('../src')
+const {
+  findTestAttributesInFiles,
+  findTestQueriesInFiles,
+  findTestQueriesInFile,
+} = require('../src')
 const { findChangedFiles } = require('../src/git')
 
 const args = arg({
@@ -32,6 +36,57 @@ debug('modes %o', { warnMode, changedMode })
 if (changedMode) {
   const changedFiles = findChangedFiles(args['--branch'], args['--parent'])
   debug('%d changed files %s', changedFiles.length, changedFiles.join(', '))
+  const sourceFiles = globby.sync(args['--sources'], {
+    sort: true,
+  })
+  const changedSourceFiles = changedFiles.filter((filename) =>
+    sourceFiles.includes(filename),
+  )
+  debug(
+    '%d changed source files %s',
+    changedSourceFiles.length,
+    changedSourceFiles.join(', '),
+  )
+  const testIds = findTestAttributesInFiles(changedSourceFiles)
+  debug(
+    'found %d test ids across %d changed source files',
+    testIds.length,
+    changedSourceFiles.length,
+  )
+  const specFiles = globby.sync(args['--specs'], {
+    sort: true,
+  })
+  const options = {
+    commands: [],
+  }
+  if (args['--command']) {
+    debug('will look for custom command %s', args['--command'])
+    const commands = args['--command'].split(',').filter(Boolean)
+    options.commands.push(...commands)
+  }
+  const specsToRun = specFiles.filter((filename) => {
+    const specTestIds = findTestQueriesInFile(filename, options)
+    return specTestIds.some((testId) => testIds.includes(testId))
+  })
+
+  // TODO: keep track of test ids NOT covered by any specs
+  // and warn by default
+
+  if (!specsToRun.length) {
+    console.log(
+      'Could not find any specs that use test ids "%s" from changed source files',
+      testIds.join(', '),
+    )
+  } else {
+    console.log(
+      'These %d specs use the test ids "%s" found in the changed source files',
+      specsToRun.length,
+      testIds.join(', '),
+    )
+    specsToRun.forEach((filename) => {
+      console.log(filename)
+    })
+  }
 } else {
   const testIdsInSourceFiles = []
   const testIdsInSpecs = []
