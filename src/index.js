@@ -130,6 +130,7 @@ function findTestQueries(source, options = {}) {
  * @param {string} filename The filename to read
  */
 function findTestAttributesInFile(filename) {
+  debug('searching %s', filename)
   const source = fs.readFileSync(filename, 'utf8')
   return findTestAttributes(source)
 }

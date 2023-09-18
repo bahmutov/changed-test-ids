@@ -13,6 +13,9 @@ jobs:
       - name: Run tests
         run: npm test
 
+      - name: Demo finding test ids in source files
+        run: npm run demo:sources
+
   release:
     runs-on: ubuntu-20.04
     needs: test
