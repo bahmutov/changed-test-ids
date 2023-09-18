@@ -29,3 +29,12 @@ test('finds two test id attributes', (t) => {
   // the list is sorted alphabetically
   t.deepEqual(found, ['count', 'greeting'])
 })
+
+test('ignores dynamic attributes', (t) => {
+  const source = stripIndent`
+    const testId = 'something';
+    <div testId={testId}>Hello</div>
+  `
+  const found = findTestAttributes(source)
+  t.deepEqual(found, [])
+})

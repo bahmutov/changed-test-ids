@@ -74,9 +74,16 @@ function findTestAttributes(source, options = {}) {
       // debug(a.node.openingElement.attributes)
       a.node.openingElement.attributes.forEach((node) => {
         if (isTestAttributeNode(attributes, node)) {
-          const testId = node.value.value
-          debug('found test id "%s"', testId)
-          testIds.push(testId)
+          if (node.value.type === 'StringLiteral') {
+            const testId = node.value.value
+            debug('found test id "%s"', testId)
+            testIds.push(testId)
+          } else {
+            debug(
+              'skipping non-string literal for attribute "%s"',
+              node.name.name,
+            )
+          }
         }
       })
     },
