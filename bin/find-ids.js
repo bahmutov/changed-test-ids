@@ -9,6 +9,7 @@ const {
   findTestQueriesInFile,
 } = require('../src')
 const { findChangedFiles } = require('../src/git')
+const core = require('@actions/core')
 
 const args = arg({
   // find test ids in the source files
@@ -21,6 +22,10 @@ const args = arg({
   '--branch': String,
   // search the files that have changed against the parent of the branch
   '--parent': Boolean,
+  // when enabled, this code uses GitHub Actions Core package
+  // to set two named outputs, one for number of changed specs
+  // another for actual list of files
+  '--set-gha-outputs': Boolean,
 
   // aliases
   '--commands': '--command',
@@ -86,6 +91,14 @@ if (changedMode) {
     specsToRun.forEach((filename) => {
       console.log(filename)
     })
+
+    if (args['--set-gha-outputs']) {
+      debug('setting GitHub Actions outputs specsToRunN and specsToRun')
+      debug('specsToRunN %d', specsToRun.length)
+      debug('plus specsToRun')
+      core.setOutput('specsToRunN', specsToRun.length)
+      core.setOutput('specsToRun', specsToRun.join(','))
+    }
   }
 } else {
   const testIdsInSourceFiles = []
