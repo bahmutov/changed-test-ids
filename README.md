@@ -59,6 +59,10 @@ If running on GitHub Actions, you can set the detected spec filenames as outputs
 
 This module uses [debug](https://github.com/debug-js/debug#readme) to output verbose logs. To see the logs, run with the following environment variable `DEBUG=changed-test-ids`
 
+## Examples
+
+- repo [bahmutov/taste-the-sauce-test-ids](https://github.com/bahmutov/taste-the-sauce-test-ids)
+
 ## Small print
 
 Author: Gleb Bahmutov &lt;gleb.bahmutov@gmail.com&gt; &copy; 2023
