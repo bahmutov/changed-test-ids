@@ -2,6 +2,8 @@
 
 > Select tests to run based on source file changes and test ids
 
+📝 Read the blog post [Using Test Ids To Pick Cypress Specs To Run](https://glebbahmutov.com/blog/using-test-ids-to-pick-specs-to-run/)
+
 ## API
 
 - `findTestQueries`
