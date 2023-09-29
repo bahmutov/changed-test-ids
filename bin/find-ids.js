@@ -92,14 +92,16 @@ if (specsForTestIdsMode) {
       debug('setting GitHub Actions outputs specsToRunN and specsToRun')
       debug('specsToRunN %d', specsToRun.length)
       debug('plus specsToRun')
+
+      const specsString = specsToRun.join(',')
       core.setOutput('specsToRunN', specsToRun.length)
-      core.setOutput('specsToRun', specsToRun.join(','))
+      core.setOutput('specsToRun', specsString)
 
       core.summary
         .addHeading('Specs using given test ids')
         .addList([
           `${testIds.length} given test ids: ${testIds.join(', ')}`,
-          `${specsToRun.length} specs found: ${specsToRun.join(', ')}`,
+          `set specsToRunN=${specsToRun.length} and specs found as specsToRun: ${specsString}`,
         ])
         .addLink(
           'bahmutov/changed-test-ids',
