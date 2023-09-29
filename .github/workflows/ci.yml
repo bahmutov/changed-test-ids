@@ -25,6 +25,9 @@ jobs:
       - name: Demo find changed specs for changed test ids
         run: npm run demo:changed
 
+      - name: Demo find test ids in changed source files
+        run: npm run demo:changed:ids -- --set-gha-outputs
+
   release:
     runs-on: ubuntu-20.04
     needs: test

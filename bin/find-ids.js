@@ -33,12 +33,19 @@ const args = arg({
 
 debug('arguments %o', args)
 
+const useAllSourceFiles = Boolean(args['--sources'] && !args['--branch'])
+const useChangedSourceFiles = Boolean(args['--sources'] && args['--branch'])
 const warnMode = args['--sources'] && args['--specs']
 const changedMode = warnMode && args['--branch']
 
-debug('modes %o', { warnMode, changedMode })
+debug('modes %o', {
+  useAllSourceFiles,
+  useChangedSourceFiles,
+  warnMode,
+  changedMode,
+})
 
-if (changedMode) {
+if (useChangedSourceFiles) {
   const changedFiles = findChangedFiles(args['--branch'], args['--parent'])
   debug('%d changed files %s', changedFiles.length, changedFiles.join(', '))
   const sourceFiles = globby.sync(args['--sources'], {
@@ -58,46 +65,70 @@ if (changedMode) {
     testIds.length,
     changedSourceFiles.length,
   )
-  const specFiles = globby.sync(args['--specs'], {
-    sort: true,
-  })
-  const options = {
-    commands: [],
-  }
-  if (args['--command']) {
-    debug('will look for custom command %s', args['--command'])
-    const commands = args['--command'].split(',').filter(Boolean)
-    options.commands.push(...commands)
-  }
-  const specsToRun = specFiles.filter((filename) => {
-    const specTestIds = findTestQueriesInFile(filename, options)
-    return specTestIds.some((testId) => testIds.includes(testId))
-  })
 
-  // TODO: keep track of test ids NOT covered by any specs
-  // and warn by default
-
-  if (!specsToRun.length) {
-    console.log(
-      'Could not find any specs that use test ids "%s" from changed source files',
-      testIds.join(', '),
-    )
-  } else {
-    console.log(
-      'These %d specs use the test ids "%s" found in the changed source files',
-      specsToRun.length,
-      testIds.join(', '),
-    )
-    specsToRun.forEach((filename) => {
-      console.log(filename)
+  if (args['--specs']) {
+    debug('finding specs using the changed test ids')
+    const specFiles = globby.sync(args['--specs'], {
+      sort: true,
+    })
+    const options = {
+      commands: [],
+    }
+    if (args['--command']) {
+      debug('will look for custom command %s', args['--command'])
+      const commands = args['--command'].split(',').filter(Boolean)
+      options.commands.push(...commands)
+    }
+    const specsToRun = specFiles.filter((filename) => {
+      const specTestIds = findTestQueriesInFile(filename, options)
+      return specTestIds.some((testId) => testIds.includes(testId))
     })
 
-    if (args['--set-gha-outputs']) {
-      debug('setting GitHub Actions outputs specsToRunN and specsToRun')
-      debug('specsToRunN %d', specsToRun.length)
-      debug('plus specsToRun')
-      core.setOutput('specsToRunN', specsToRun.length)
-      core.setOutput('specsToRun', specsToRun.join(','))
+    // TODO: keep track of test ids NOT covered by any specs
+    // and warn by default
+
+    if (!specsToRun.length) {
+      console.log(
+        'Could not find any specs that use test ids "%s" from changed source files',
+        testIds.join(', '),
+      )
+    } else {
+      console.log(
+        'These %d specs use the test ids "%s" found in the changed source files',
+        specsToRun.length,
+        testIds.join(', '),
+      )
+      specsToRun.forEach((filename) => {
+        console.log(filename)
+      })
+
+      if (args['--set-gha-outputs']) {
+        debug('setting GitHub Actions outputs specsToRunN and specsToRun')
+        debug('specsToRunN %d', specsToRun.length)
+        debug('plus specsToRun')
+        core.setOutput('specsToRunN', specsToRun.length)
+        core.setOutput('specsToRun', specsToRun.join(','))
+      }
+    }
+  } else {
+    debug('only outputting changed test ids')
+    if (!testIds.length) {
+      console.log(
+        'Could not find any test ids in %d changed source files',
+        changedSourceFiles.length,
+      )
+    } else {
+      testIds.forEach((testId) => {
+        console.log(testId)
+      })
+
+      if (args['--set-gha-outputs']) {
+        debug(
+          'setting GitHub Actions outputs changedTestIdsN and changedTestIds',
+        )
+        core.setOutput('changedTestIdsN', testIds.length)
+        core.setOutput('changedTestIds', testIds.join(','))
+      }
     }
   }
 } else {
