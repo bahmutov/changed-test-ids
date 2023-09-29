@@ -18,7 +18,8 @@
     "demo:specs": "DEBUG=changed-test-ids node ./bin/find-ids --specs 'tests/fixtures/*.cy.js' --command getTest,findById",
     "demo:warn": "DEBUG=changed-test-ids node ./bin/find-ids --sources 'tests/fixtures/*.jsx' --specs 'tests/fixtures/*.cy.js' --command getTest,findById",
     "demo:changed": "DEBUG=changed-test-ids node ./bin/find-ids --branch main --sources 'tests/fixtures/*.jsx' --specs 'tests/fixtures/*.cy.js' --command getTest,findById",
-    "demo:changed:ids": "DEBUG=changed-test-ids node ./bin/find-ids --branch main --sources 'tests/fixtures/*.jsx'"
+    "demo:changed:ids": "DEBUG=changed-test-ids node ./bin/find-ids --branch main --sources 'tests/fixtures/*.jsx'",
+    "demo:ids:specs": "DEBUG=changed-test-ids node ./bin/find-ids --test-ids greeting,lastName --specs 'tests/fixtures/*.cy.js' --command getTest,findById"
   },
   "keywords": [
     "cypress-plugin",

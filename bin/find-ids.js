@@ -26,6 +26,8 @@ const args = arg({
   // to set two named outputs, one for number of changed specs
   // another for actual list of files
   '--set-gha-outputs': Boolean,
+  // find specs that use these test ids (comma-separated list)
+  '--test-ids': String,
 
   // aliases
   '--commands': '--command',
@@ -34,16 +36,77 @@ const args = arg({
 debug('arguments %o', args)
 
 const useChangedSourceFiles = Boolean(args['--sources'] && args['--branch'])
-const warnMode = args['--sources'] && args['--specs']
-const changedMode = warnMode && args['--branch']
+const warnMode = Boolean(args['--sources'] && args['--specs'])
+const changedMode = Boolean(warnMode && args['--branch'])
+const specsForTestIdsMode = Boolean(args['--test-ids'] && args['--specs'])
 
 debug('modes %o', {
   useChangedSourceFiles,
+  specsForTestIdsMode,
   warnMode,
   changedMode,
 })
 
-if (useChangedSourceFiles) {
+if (specsForTestIdsMode) {
+  debug('finding specs using the given test ids')
+  const testIds = args['--test-ids']
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean)
+  debug('have %d test ids: %s', testIds.length, testIds.join(', '))
+  const specFiles = globby.sync(args['--specs'], {
+    sort: true,
+  })
+  const options = {
+    commands: [],
+  }
+  if (args['--command']) {
+    debug('will look for custom command %s', args['--command'])
+    const commands = args['--command'].split(',').filter(Boolean)
+    options.commands.push(...commands)
+  }
+  const specsToRun = specFiles.filter((filename) => {
+    const specTestIds = findTestQueriesInFile(filename, options)
+    return specTestIds.some((testId) => testIds.includes(testId))
+  })
+
+  // TODO: keep track of test ids NOT covered by any specs
+  // and warn by default
+
+  if (!specsToRun.length) {
+    console.log(
+      'Could not find any specs that use the given test ids "%s"',
+      testIds.join(', '),
+    )
+  } else {
+    console.log(
+      'These %d specs use the given test ids "%s"',
+      specsToRun.length,
+      testIds.join(', '),
+    )
+    specsToRun.forEach((filename) => {
+      console.log(filename)
+    })
+
+    if (args['--set-gha-outputs']) {
+      debug('setting GitHub Actions outputs specsToRunN and specsToRun')
+      debug('specsToRunN %d', specsToRun.length)
+      debug('plus specsToRun')
+      core.setOutput('specsToRunN', specsToRun.length)
+      core.setOutput('specsToRun', specsToRun.join(','))
+
+      core.summary
+        .addHeading('Specs using given test ids')
+        .write(`Given ${testIds.length} test ids: ${testIds.join(', ')}`)
+        .write(`Found ${specsToRun.length} specs: ${specsToRun.join(', ')}`)
+        .addLink(
+          'bahmutov/changed-test-ids',
+          'https://github.com/bahmutov/changed-test-ids',
+        )
+        .write()
+    }
+  }
+} else if (useChangedSourceFiles) {
   const changedFiles = findChangedFiles(args['--branch'], args['--parent'])
   debug('%d changed files %s', changedFiles.length, changedFiles.join(', '))
   const sourceFiles = globby.sync(args['--sources'], {
