@@ -148,14 +148,19 @@ if (useChangedSourceFiles) {
             'setting GitHub Actions outputs changedTestIdsN and changedTestIds',
           )
           core.setOutput('changedTestIdsN', testIds.length)
-          core.setOutput('changedTestIds', testIds.join(','))
+          const ids = testIds.join(',')
+          core.setOutput('changedTestIds', ids)
           core.summary
-            .addHeading('changed-test-ids')
+            .addHeading('Test Ids In Changed Source Files')
             .addTable([
               ['Parent branch', args['--branch']],
               ['Changed files', String(changedFiles.length)],
               ['Changed source files', String(changedSourceFiles.length)],
-              ['Changed test ids', String(testIds.length)],
+              ['Changed test ids N', String(testIds.length)],
+              [
+                'Changed test ids ',
+                ids.length < 100 ? ids : ids.slice(0, 100) + '...',
+              ],
             ])
             .addLink(
               'bahmutov/changed-test-ids',
