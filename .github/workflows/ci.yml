@@ -6,7 +6,12 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
+        # https://github.com/actions/checkout
         uses: actions/checkout@v4
+        with:
+          # we need multiple branches
+          # in order to detect Git changes
+          fetch-depth: 0
 
       - uses: bahmutov/npm-install@v1
 
@@ -24,6 +29,9 @@ jobs:
 
       - name: Demo find changed specs for changed test ids
         run: npm run demo:changed
+
+      - name: Demo find test ids in changed source files
+        run: npm run demo:changed:ids -- --set-gha-outputs
 
   release:
     runs-on: ubuntu-20.04
