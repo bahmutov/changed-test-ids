@@ -97,11 +97,8 @@ if (specsForTestIdsMode) {
 
       core.summary
         .addHeading('Specs using given test ids')
-        .addRaw(`Given ${testIds.length} test ids: ${testIds.join(', ')}`, true)
-        .addRaw(
-          `Found ${specsToRun.length} specs: ${specsToRun.join(', ')}`,
-          true,
-        )
+        .addList(`${testIds.length} given test ids: ${testIds.join(', ')}`)
+        .addList(`${specsToRun.length} specs found: ${specsToRun.join(', ')}`)
         .addLink(
           'bahmutov/changed-test-ids',
           'https://github.com/bahmutov/changed-test-ids',
