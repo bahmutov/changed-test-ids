@@ -66,6 +66,19 @@ if (useChangedSourceFiles) {
       )
       core.setOutput('changedTestIdsN', 0)
       core.setOutput('changedTestIds', '')
+      core.summary
+        .addHeading('changed-test-ids')
+        .addTable([
+          ['Parent branch', args['--branch']],
+          ['Changed files', String(changedFiles.length)],
+          ['Changed source files', String(changedSourceFiles.length)],
+          ['Changed test ids', String(testIds.length)],
+        ])
+        .addLink(
+          'bahmutov/changed-test-ids',
+          'https://github.com/bahmutov/changed-test-ids',
+        )
+        .write()
     }
   } else {
     debug(
@@ -136,6 +149,19 @@ if (useChangedSourceFiles) {
           )
           core.setOutput('changedTestIdsN', testIds.length)
           core.setOutput('changedTestIds', testIds.join(','))
+          core.summary
+            .addHeading('changed-test-ids')
+            .addTable([
+              ['Parent branch', args['--branch']],
+              ['Changed files', String(changedFiles.length)],
+              ['Changed source files', String(changedSourceFiles.length)],
+              ['Changed test ids', String(testIds.length)],
+            ])
+            .addLink(
+              'bahmutov/changed-test-ids',
+              'https://github.com/bahmutov/changed-test-ids',
+            )
+            .write()
         }
       }
     }
