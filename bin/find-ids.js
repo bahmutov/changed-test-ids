@@ -33,13 +33,11 @@ const args = arg({
 
 debug('arguments %o', args)
 
-const useAllSourceFiles = Boolean(args['--sources'] && !args['--branch'])
 const useChangedSourceFiles = Boolean(args['--sources'] && args['--branch'])
 const warnMode = args['--sources'] && args['--specs']
 const changedMode = warnMode && args['--branch']
 
 debug('modes %o', {
-  useAllSourceFiles,
   useChangedSourceFiles,
   warnMode,
   changedMode,
