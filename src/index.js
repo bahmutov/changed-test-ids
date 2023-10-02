@@ -122,9 +122,11 @@ function findTestQueries(source, options = {}) {
         }
       } else if (isCyCustomQueryExpression(queryCommands, a.node)) {
         debug('it is a custom query command')
-        const testId = a.node.arguments[0].value
-        debug('found query test id "%s"', testId)
-        testIds.push(testId)
+        if (a.node.arguments[0].type === 'StringLiteral') {
+          const testId = a.node.arguments[0].value
+          debug('found query test id "%s"', testId)
+          testIds.push(testId)
+        }
       }
     },
   })
