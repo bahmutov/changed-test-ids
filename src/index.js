@@ -1,5 +1,6 @@
 const debug = require('debug')('changed-test-ids')
-const babel = require('@babel/core')
+const babel = require('@babel/parser')
+const traverse = require('@babel/core').traverse
 const fs = require('fs')
 
 // console.log(babel)
@@ -52,9 +53,19 @@ function extractTestId(s) {
 }
 
 function findTestAttributes(source, options = {}) {
-  const ast = babel.parse(source, {
-    plugins: ['@babel/plugin-syntax-jsx'],
-  })
+  let ast
+
+  try {
+    ast = babel.parse(source, {
+      plugins: ['jsx'],
+      sourceType: 'script',
+    })
+  } catch (e) {
+    ast = babel.parse(source, {
+      plugins: ['jsx'],
+      sourceType: 'module',
+    })
+  }
 
   const attributes = [
     'testId',
@@ -68,7 +79,7 @@ function findTestAttributes(source, options = {}) {
 
   const testIds = []
 
-  babel.traverse(ast, {
+  traverse(ast, {
     JSXElement(a) {
       // debug('JSXElement')
       // debug(a.node.openingElement.attributes)
@@ -98,19 +109,31 @@ function findTestAttributes(source, options = {}) {
  */
 
 /**
- * Parses the given spec source code and finds all queried test id values.
+ * Parses the given Cypress spec source code and finds all queried test id values.
  * @param {string} source The spec source code
  * @param {FindQueriesOptions} options Options controlling what to look for
  */
 function findTestQueries(source, options = {}) {
   const testIds = []
 
-  const ast = babel.parse(source)
+  let ast
+
+  try {
+    ast = babel.parse(source, {
+      plugins: ['typescript'],
+      sourceType: 'script',
+    })
+  } catch (e) {
+    ast = babel.parse(source, {
+      plugins: ['typescript'],
+      sourceType: 'module',
+    })
+  }
 
   const queryCommands = [...(options.commands || [])]
   debug('query commands to find', queryCommands)
 
-  babel.traverse(ast, {
+  traverse(ast, {
     CallExpression(a) {
       // debug('CallExpression')
       if (isCyQueryCommandExpression(a.node)) {
