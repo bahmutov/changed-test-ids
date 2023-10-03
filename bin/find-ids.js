@@ -110,13 +110,13 @@ if (specsForTestIdsMode) {
       testIds.forEach((testId) => {
         if (testIdToSpecs[testId].length) {
           console.log(
-            '%s used in %d spec(s)',
+            '"%s" used in %d spec(s)',
             testId,
             testIdToSpecs[testId].length,
           )
           console.log('  %s', testIdToSpecs[testId].join(', '))
         } else {
-          console.log('%s not found in any of the specs', testId)
+          console.log('"%s" not found in any of the specs', testId)
         }
       })
     } else {
@@ -338,7 +338,10 @@ if (specsForTestIdsMode) {
         const commands = args['--command'].split(',').filter(Boolean)
         options.commands.push(...commands)
       }
-      const testIds = findTestQueriesInFiles(specFiles, options)
+      const { testIds, testIdToFilenames } = findTestQueriesInFiles(
+        specFiles,
+        options,
+      )
       debug(
         'found %d test ids across %d specs',
         testIds.length,
@@ -348,10 +351,25 @@ if (specsForTestIdsMode) {
         console.log('Could not find any test ids in %d specs', specFiles.length)
       } else {
         if (!warnMode) {
-          // will report test ids later
-          testIds.forEach((testId) => {
-            console.log(testId)
-          })
+          if (verbose) {
+            Object.keys(testIdToFilenames).forEach((testId) => {
+              if (testIdToFilenames[testId].length) {
+                console.log(
+                  '"%s" used in %d spec(s)',
+                  testId,
+                  testIdToFilenames[testId].length,
+                )
+                console.log('  %s', testIdToFilenames[testId].join(', '))
+              } else {
+                console.log('"%s" not found in any of the specs', testId)
+              }
+            })
+          } else {
+            // will report test ids later
+            testIds.forEach((testId) => {
+              console.log(testId)
+            })
+          }
         }
         testIdsInSpecs.push(...testIds)
       }

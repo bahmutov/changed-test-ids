@@ -24,6 +24,9 @@ jobs:
       - name: Demo finding test ids in specs
         run: npm run demo:specs
 
+      - name: Demo finding test ids in specs and printing verbose info
+        run: npm run demo:specs -- --verbose
+
       - name: Demo warning about untested ids
         run: npm run demo:warn
 

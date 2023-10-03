@@ -43,6 +43,8 @@ If you want to pick both JS and TS tests, use glob syntax. For example, let's gr
 --specs 'tests/fixtures/*.cy.{js,ts}'
 ```
 
+To produce verbose output showing specs for each test id, add argument `--verbose`
+
 ### Warn on untested ids
 
 If you specify both sources and specs, then it will find all test ids used in the source files NOT used by the specs and list them one at a time
@@ -76,19 +78,19 @@ If running on GitHub Actions, use `--set-gha-outputs` to set the list of detecte
 ### Find specs that use particular test ids
 
 ```
-$ npx find-ids --specs ... --command ...
+$ npx find-ids --specs ... --command ... --test-ids one,two
 ```
 
-For example, to find all test ids used in `.cy.js` and `.cy.ts` files and that use custom command `cy.getBy`
+For example, to find all specs ending in `.cy.js` and `.cy.ts` files and that use custom command `cy.getBy` and use test id `greeting`
 
 ```
-$ npx find-ids --specs 'cypress/e2e/**/*.cy.{js,ts}' --command getBy
+$ npx find-ids --specs 'cypress/e2e/**/*.cy.{js,ts}' --command getBy --test-ids greeting
 ```
 
 You can output detailed information showing each spec using a test id by adding parameter `--verbose`
 
 ```
-$ npx find-ids --specs 'cypress/e2e/**/*.cy.{js,ts}' --command getBy --verbose
+$ npx find-ids --specs 'cypress/e2e/**/*.cy.{js,ts}' --command getBy --test-ids greeting --verbose
 ```
 
 ## Debugging

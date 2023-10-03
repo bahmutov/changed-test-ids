@@ -202,14 +202,24 @@ function findTestQueriesInFile(filename, options = {}) {
  */
 function findTestQueriesInFiles(filenames, options = {}) {
   const names = new Set()
+
+  // each test id is a key, and the value
+  // is a list of specs that use that test id
+  const testIdToFilenames = {}
+
   filenames.forEach((filename) => {
     const ids = findTestQueriesInFile(filename, options)
     ids.forEach((testId) => {
       names.add(testId)
+      if (!testIdToFilenames[testId]) {
+        testIdToFilenames[testId] = [filename]
+      } else {
+        testIdToFilenames[testId].push(filename)
+      }
     })
   })
-  const ids = [...names].sort()
-  return ids
+  const testIds = [...names].sort()
+  return { testIds, testIdToFilenames }
 }
 
 module.exports = {
