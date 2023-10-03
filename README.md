@@ -37,6 +37,12 @@ $ npx find-ids --specs 'glob pattern to the Cypress specs' --command getById
 
 Outputs the sorted list of test attributes, one per line. For example, use `npm run demo:specs`. You can use several custom commands, separate them using commas `--commands getById,containsByTest`. Specs could be TypeScript.
 
+If you want to pick both JS and TS tests, use glob syntax. For example, let's grab all `.cy.js` and `.cy.ts` specs
+
+```
+--specs 'tests/fixtures/*.cy.{js,ts}'
+```
+
 ### Warn on untested ids
 
 If you specify both sources and specs, then it will find all test ids used in the source files NOT used by the specs and list them one at a time
