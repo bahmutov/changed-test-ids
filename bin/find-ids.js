@@ -28,13 +28,19 @@ const args = arg({
   '--set-gha-outputs': Boolean,
   // find specs that use these test ids (comma-separated list)
   '--test-ids': String,
+  // output additional information
+  '--verbose': Boolean,
 
   // aliases
+  '--spec': '--specs',
   '--commands': '--command',
+  '--set-gha-output': '--set-gha-outputs',
+  '--v': '--verbose',
 })
 
 debug('arguments %o', args)
 
+const verbose = args['--verbose']
 const useChangedSourceFiles = Boolean(args['--sources'] && args['--branch'])
 const warnMode = Boolean(args['--sources'] && args['--specs'])
 const changedMode = Boolean(warnMode && args['--branch'])
@@ -45,6 +51,7 @@ debug('modes %o', {
   specsForTestIdsMode,
   warnMode,
   changedMode,
+  verbose,
 })
 
 if (specsForTestIdsMode) {
@@ -65,9 +72,24 @@ if (specsForTestIdsMode) {
     const commands = args['--command'].split(',').filter(Boolean)
     options.commands.push(...commands)
   }
+
+  // each test id is a key, and the value
+  // is a list of specs that use that test id
+  const testIdToSpecs = {}
+  testIds.forEach((testId) => {
+    testIdToSpecs[testId] = []
+  })
+
   const specsToRun = specFiles.filter((filename) => {
     const specTestIds = findTestQueriesInFile(filename, options)
-    return specTestIds.some((testId) => testIds.includes(testId))
+    let specUsesTestId = false
+    testIds.forEach((testId) => {
+      if (specTestIds.includes(testId)) {
+        specUsesTestId = true
+        testIdToSpecs[testId].push(filename)
+      }
+    })
+    return specUsesTestId
   })
 
   // TODO: keep track of test ids NOT covered by any specs
@@ -84,9 +106,24 @@ if (specsForTestIdsMode) {
       specsToRun.length,
       testIds.join(', '),
     )
-    specsToRun.forEach((filename) => {
-      console.log(filename)
-    })
+    if (verbose) {
+      testIds.forEach((testId) => {
+        if (testIdToSpecs[testId].length) {
+          console.log(
+            '%s used in %d spec(s)',
+            testId,
+            testIdToSpecs[testId].length,
+          )
+          console.log('  %s', testIdToSpecs[testId].join(', '))
+        } else {
+          console.log('%s not found in any of the specs', testId)
+        }
+      })
+    } else {
+      specsToRun.forEach((filename) => {
+        console.log(filename)
+      })
+    }
 
     if (args['--set-gha-outputs']) {
       debug('setting GitHub Actions outputs specsToRunN and specsToRun')

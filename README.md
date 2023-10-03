@@ -73,6 +73,24 @@ $ npx find-ids --sources --branch <compare against branch name>
 
 If running on GitHub Actions, use `--set-gha-outputs` to set the list of detected test ids `changedTestIds` and the number `changedTestIdsN`.
 
+### Find specs that use particular test ids
+
+```
+$ npx find-ids --specs ... --command ...
+```
+
+For example, to find all test ids used in `.cy.js` and `.cy.ts` files and that use custom command `cy.getBy`
+
+```
+$ npx find-ids --specs 'cypress/e2e/**/*.cy.{js,ts}' --command getBy
+```
+
+You can output detailed information showing each spec using a test id by adding parameter `--verbose`
+
+```
+$ npx find-ids --specs 'cypress/e2e/**/*.cy.{js,ts}' --command getBy --verbose
+```
+
 ## Debugging
 
 This module uses [debug](https://github.com/debug-js/debug#readme) to output verbose logs. To see the logs, run with the following environment variable `DEBUG=changed-test-ids`
