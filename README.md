@@ -35,7 +35,7 @@ Let's look through the Cypress specs for custom command `cy.getById` and find al
 $ npx find-ids --specs 'glob pattern to the Cypress specs' --command getById
 ```
 
-Outputs the sorted list of test attributes, one per line. For example, use `npm run demo:specs`. You can use several custom commands, separate them using commas `--commands getById,containsByTest`
+Outputs the sorted list of test attributes, one per line. For example, use `npm run demo:specs`. You can use several custom commands, separate them using commas `--commands getById,containsByTest`. Specs could be TypeScript.
 
 ### Warn on untested ids
 
