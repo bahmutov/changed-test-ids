@@ -103,6 +103,14 @@ If a source file or a spec have syntax that cannot be parsed, they are ignored. 
 
 - repo [bahmutov/taste-the-sauce-test-ids](https://github.com/bahmutov/taste-the-sauce-test-ids)
 
+### Find sources in two folders
+
+Let's say we want to find data attributes in all source files in the subfolders `pages` and `components`.
+
+```
+$ npx find-ids --sources '{pages,components}/**/*.jsx'
+```
+
 ## Small print
 
 Author: Gleb Bahmutov &lt;gleb.bahmutov@gmail.com&gt; &copy; 2023

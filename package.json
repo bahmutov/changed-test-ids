@@ -15,6 +15,7 @@
     "test:watch": "ava -w",
     "semantic-release": "semantic-release",
     "demo:sources": "DEBUG=changed-test-ids node ./bin/find-ids --sources 'tests/fixtures/*.jsx'",
+    "demo:sources:separate": "DEBUG=changed-test-ids node ./bin/find-ids --sources 'tests/fixtures/{hello.jsx,person.jsx}'",
     "demo:specs": "DEBUG=changed-test-ids node ./bin/find-ids --specs 'tests/fixtures/*.cy.{js,ts}' --command getTest,findById",
     "demo:warn": "DEBUG=changed-test-ids node ./bin/find-ids --sources 'tests/fixtures/*.jsx' --specs 'tests/fixtures/*.cy.js' --command getTest,findById",
     "demo:changed": "DEBUG=changed-test-ids node ./bin/find-ids --branch main --sources 'tests/fixtures/*.jsx' --specs 'tests/fixtures/*.cy.js' --command getTest,findById",
