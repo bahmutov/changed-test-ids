@@ -197,7 +197,12 @@ function findTestAttributesInFiles(filenames) {
  */
 function findTestQueriesInFile(filename, options = {}) {
   const source = fs.readFileSync(filename, 'utf8')
-  return findTestQueries(source, options)
+  try {
+    return findTestQueries(source, options)
+  } catch (e) {
+    debug('⚠️ could not parse spec %s', filename)
+    return []
+  }
 }
 
 /**
