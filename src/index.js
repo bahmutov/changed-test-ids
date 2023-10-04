@@ -164,7 +164,13 @@ function findTestQueries(source, options = {}) {
 function findTestAttributesInFile(filename) {
   debug('searching %s', filename)
   const source = fs.readFileSync(filename, 'utf8')
-  return findTestAttributes(source)
+
+  try {
+    return findTestAttributes(source)
+  } catch (e) {
+    debug('⚠️ could not parse source code in file %s', filename)
+    return []
+  }
 }
 
 /**
@@ -191,7 +197,12 @@ function findTestAttributesInFiles(filenames) {
  */
 function findTestQueriesInFile(filename, options = {}) {
   const source = fs.readFileSync(filename, 'utf8')
-  return findTestQueries(source, options)
+  try {
+    return findTestQueries(source, options)
+  } catch (e) {
+    debug('⚠️ could not parse spec %s', filename)
+    return []
+  }
 }
 
 /**
