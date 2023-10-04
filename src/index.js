@@ -57,12 +57,12 @@ function findTestAttributes(source, options = {}) {
 
   try {
     ast = babel.parse(source, {
-      plugins: ['jsx'],
+      plugins: ['jsx', 'typescript'],
       sourceType: 'script',
     })
   } catch (e) {
     ast = babel.parse(source, {
-      plugins: ['jsx'],
+      plugins: ['jsx', 'typescript'],
       sourceType: 'module',
     })
   }
