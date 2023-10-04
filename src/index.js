@@ -72,6 +72,7 @@ function findTestAttributes(source, options = {}) {
     'data-cy',
     'data-test',
     'data-test-id',
+    'data-testid',
     'data-testId',
     ...(options.attributes || []),
   ]

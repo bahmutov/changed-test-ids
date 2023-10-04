@@ -38,3 +38,11 @@ test('ignores dynamic attributes', (t) => {
   const found = findTestAttributes(source)
   t.deepEqual(found, [])
 })
+
+test('finds data-testid attribute', (t) => {
+  const source = stripIndent`
+    <div data-testid="greeting">Hello</div>
+  `
+  const found = findTestAttributes(source)
+  t.deepEqual(found, ['greeting'])
+})
