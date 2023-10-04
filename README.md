@@ -97,6 +97,8 @@ $ npx find-ids --specs 'cypress/e2e/**/*.cy.{js,ts}' --command getBy --test-ids 
 
 This module uses [debug](https://github.com/debug-js/debug#readme) to output verbose logs. To see the logs, run with the following environment variable `DEBUG=changed-test-ids`
 
+If a source file or a spec have syntax that cannot be parsed, they are ignored. You can see a debug message `changed-test-ids ⚠️ could not parse spec <filename> +0ms`
+
 ## Examples
 
 - repo [bahmutov/taste-the-sauce-test-ids](https://github.com/bahmutov/taste-the-sauce-test-ids)
