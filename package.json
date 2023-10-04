@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "@actions/core": "^1.10.1",
-    "@babel/core": "^7.22.17",
+    "@babel/core": "^7.23.0",
     "@babel/parser": "^7.23.0",
     "@babel/plugin-syntax-jsx": "^7.22.5",
     "arg": "^5.0.2",

@@ -46,3 +46,15 @@ test('finds data-testid attribute', (t) => {
   const found = findTestAttributes(source)
   t.deepEqual(found, ['greeting'])
 })
+
+test('handles optional ? operator', (t) => {
+  const source = stripIndent`
+    const person = {}
+    console.log(person?.name)
+    export const Greeting = () => {
+      return <div data-testid="greeting">Hello</div>
+    }
+  `
+  const found = findTestAttributes(source)
+  t.deepEqual(found, ['greeting'])
+})
