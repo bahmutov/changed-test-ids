@@ -74,6 +74,7 @@ function findTestAttributes(source, options = {}) {
     'data-test-id',
     'data-testid',
     'data-testId',
+    'dataTestId',
     ...(options.attributes || []),
   ]
   debug('test attributes to find', attributes)
