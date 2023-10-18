@@ -3,5 +3,9 @@ type Address = {
 }
 
 export function Address() {
-  return <div data-cy="street">Main</div>
+  return (
+    <div data-cy="street" dataTestId="MyAddress">
+      Main
+    </div>
+  )
 }

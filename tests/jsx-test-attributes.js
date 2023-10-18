@@ -41,3 +41,11 @@ test('finds data-testId', (t) => {
   const found = findTestAttributes(source)
   t.deepEqual(found, ['greeting'])
 })
+
+test('finds dataTestId', (t) => {
+  const source = stripIndent`
+    <div dataTestId="greeting">Hello</div>
+  `
+  const found = findTestAttributes(source)
+  t.deepEqual(found, ['greeting'])
+})
