@@ -92,8 +92,9 @@ if (specsForTestIdsMode) {
     return specUsesTestId
   })
 
-  // TODO: keep track of test ids NOT covered by any specs
-  // and warn by default
+  const unusedTestIds = testIds.filter(
+    (testId) => testIdToSpecs[testId].length === 0,
+  )
 
   if (!specsToRun.length) {
     console.log(
@@ -106,6 +107,13 @@ if (specsForTestIdsMode) {
       specsToRun.length,
       testIds.join(', '),
     )
+    if (unusedTestIds.length) {
+      console.warn(
+        'The following %d test ids were not used in any specs',
+        unusedTestIds.length,
+      )
+      console.warn(unusedTestIds.join(', '))
+    }
     if (verbose) {
       testIds.forEach((testId) => {
         if (testIdToSpecs[testId].length) {
@@ -134,12 +142,21 @@ if (specsForTestIdsMode) {
       core.setOutput('specsToRunN', specsToRun.length)
       core.setOutput('specsToRun', specsString)
 
+      const list = [
+        `${testIds.length} given test ids: ${testIds.join(', ')}`,
+        `set specsToRunN=${specsToRun.length} and specs found as specsToRun: ${specsString}`,
+      ]
+      if (unusedTestIds.length) {
+        list.push(
+          `${
+            unusedTestIds.length
+          } test ids were not used in any specs: ${unusedTestIds.join(', ')}`,
+        )
+      }
+
       core.summary
         .addHeading('Specs using given test ids')
-        .addList([
-          `${testIds.length} given test ids: ${testIds.join(', ')}`,
-          `set specsToRunN=${specsToRun.length} and specs found as specsToRun: ${specsString}`,
-        ])
+        .addList(list)
         .addLink(
           'bahmutov/changed-test-ids',
           'https://github.com/bahmutov/changed-test-ids',
