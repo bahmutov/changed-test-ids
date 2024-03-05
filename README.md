@@ -73,7 +73,7 @@ You can simply detect test ids in the changed source files and output their list
 $ npx find-ids --sources --branch <compare against branch name>
 ```
 
-If running on GitHub Actions, use `--set-gha-outputs` to set the list of detected test ids `changedTestIds` and the number `changedTestIdsN`.
+If running on GitHub Actions, use `--set-gha-outputs` to set the list of detected test ids `changedTestIds` and the number `changedTestIdsN`. Any unused test ids will be set into outputs `unusedTestIds` and `unusedTestIdsN`.
 
 ### Find specs that use particular test ids
 

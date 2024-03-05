@@ -141,6 +141,8 @@ if (specsForTestIdsMode) {
       const specsString = specsToRun.join(',')
       core.setOutput('specsToRunN', specsToRun.length)
       core.setOutput('specsToRun', specsString)
+      core.setOutput('unusedTestIdsN', unusedTestIds.length)
+      core.setOutput('unusedTestIds', unusedTestIds.join(','))
 
       const list = [
         `${testIds.length} given test ids: ${testIds.join(', ')}`,
