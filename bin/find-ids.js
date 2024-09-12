@@ -30,6 +30,8 @@ const args = arg({
   '--test-ids': String,
   // output additional information
   '--verbose': Boolean,
+  // output found test ids using comma-separated list
+  '--comma': Boolean,
 
   // aliases
   '--spec': '--specs',
@@ -315,7 +317,7 @@ if (specsForTestIdsMode) {
         debug(filename)
       })
       const testIds = findTestAttributesInFiles(sourceFiles)
-      debug(
+      console.error(
         'found %d test ids across %d source files',
         testIds.length,
         sourceFiles.length,
@@ -328,9 +330,15 @@ if (specsForTestIdsMode) {
       } else {
         if (!warnMode) {
           // will report test ids later
-          testIds.forEach((testId) => {
-            console.log(testId)
-          })
+          if (args['--comma']) {
+            const ids = testIds.join(',')
+            console.log(ids)
+          } else {
+            // output a single test id per line
+            testIds.forEach((testId) => {
+              console.log(testId)
+            })
+          }
         }
         testIdsInSourceFiles.push(...testIds)
       }

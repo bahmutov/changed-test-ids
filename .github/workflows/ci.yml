@@ -21,6 +21,9 @@ jobs:
       - name: Demo finding test ids in source files
         run: npm run demo:sources
 
+      - name: Output test ids using comma-separated line
+        run: npm run demo:sources:comma
+
       - name: Demo finding test ids in specs
         run: npm run demo:specs
 
