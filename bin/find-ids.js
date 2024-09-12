@@ -369,7 +369,7 @@ if (specsForTestIdsMode) {
         specFiles,
         options,
       )
-      debug(
+      console.error(
         'found %d test ids across %d specs',
         testIds.length,
         specFiles.length,
@@ -393,9 +393,14 @@ if (specsForTestIdsMode) {
             })
           } else {
             // will report test ids later
-            testIds.forEach((testId) => {
-              console.log(testId)
-            })
+            if (args['--comma']) {
+              const ids = testIds.join(',')
+              console.log(ids)
+            } else {
+              testIds.forEach((testId) => {
+                console.log(testId)
+              })
+            }
           }
         }
         testIdsInSpecs.push(...testIds)

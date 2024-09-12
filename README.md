@@ -49,7 +49,7 @@ If you want to pick both JS and TS tests, use glob syntax. For example, let's gr
 --specs 'tests/fixtures/*.cy.{js,ts}'
 ```
 
-To produce verbose output showing specs for each test id, add argument `--verbose`
+To produce verbose output showing specs for each test id, add argument `--verbose`. To output comma-separated test ids in a single line, use `--comma` argument.
 
 ### Warn on untested ids
 

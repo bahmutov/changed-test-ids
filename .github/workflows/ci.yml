@@ -27,6 +27,9 @@ jobs:
       - name: Demo finding test ids in specs
         run: npm run demo:specs
 
+      - name: Demo finding test ids in specs, comma-separated single line
+        run: npm run demo:specs -- --comma
+
       - name: Demo finding test ids in specs and printing verbose info
         run: npm run demo:specs -- --verbose
 
