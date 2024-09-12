@@ -32,6 +32,8 @@ const args = arg({
   '--verbose': Boolean,
   // output found test ids using comma-separated list
   '--comma': Boolean,
+  // output unused test ids from the given list
+  '--unused': Boolean,
 
   // aliases
   '--spec': '--specs',
@@ -104,17 +106,28 @@ if (specsForTestIdsMode) {
       testIds.join(', '),
     )
   } else {
-    console.log(
-      'These %d specs use the given test ids "%s"',
-      specsToRun.length,
-      testIds.join(', '),
-    )
-    if (unusedTestIds.length) {
-      console.warn(
-        'The following %d test ids were not used in any specs',
-        unusedTestIds.length,
+    if (!args['--unused']) {
+      console.log(
+        'These %d specs use the given test ids "%s"',
+        specsToRun.length,
+        testIds.join(', '),
       )
-      console.warn(unusedTestIds.join(', '))
+    }
+
+    if (unusedTestIds.length) {
+      if (args['--unused']) {
+        console.warn(
+          '%d test ids were not used in any specs',
+          unusedTestIds.length,
+        )
+        console.log(unusedTestIds.join(','))
+      } else {
+        console.warn(
+          'The following %d test ids were not used in any specs',
+          unusedTestIds.length,
+        )
+        console.warn(unusedTestIds.join(', '))
+      }
     }
     if (verbose) {
       testIds.forEach((testId) => {
@@ -130,9 +143,11 @@ if (specsForTestIdsMode) {
         }
       })
     } else {
-      specsToRun.forEach((filename) => {
-        console.log(filename)
-      })
+      if (!args['--unused']) {
+        specsToRun.forEach((filename) => {
+          console.log(filename)
+        })
+      }
     }
 
     if (args['--set-gha-outputs']) {

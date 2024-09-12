@@ -48,6 +48,9 @@ jobs:
       - name: Print specs that use specific test ids (verbose mode)
         run: npm run demo:ids:specs -- --set-gha-outputs --verbose
 
+      - name: Print unused test ids
+        run: npm run demo:unused:ids
+
   release:
     runs-on: ubuntu-20.04
     needs: test

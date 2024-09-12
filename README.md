@@ -61,6 +61,24 @@ $ npx find-ids --sources ... --specs ... --command ...
 name
 ```
 
+### Print unused test ids
+
+Instead of warning about unused test ids, you can specifically only list all of them using a single comma-separated line
+
+```
+$ npx find-ids --specs ... --command ... --test-ids "..."
+```
+
+For example, run
+
+```
+$ npm run demo:unused:ids
+> node ./bin/find-ids --test-ids greeting,lastName,foo,bar --specs 'tests/fixtures/*.cy.js' --command getTest,findById --unused
+
+3 test ids were not used in any specs
+lastName,foo,bar
+```
+
 ### Specs to run based on Git changes
 
 You can automatically compute which specs use the test ids from the changed source in the current branch.
