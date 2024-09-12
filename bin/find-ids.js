@@ -28,6 +28,8 @@ const args = arg({
   '--set-gha-outputs': Boolean,
   // find specs that use these test ids (comma-separated list)
   '--test-ids': String,
+  // read test ids from the given text file (comma-separated list)
+  '--test-ids-from-file': String,
   // output additional information
   '--verbose': Boolean,
   // output found test ids using comma-separated list
@@ -48,7 +50,9 @@ const verbose = args['--verbose']
 const useChangedSourceFiles = Boolean(args['--sources'] && args['--branch'])
 const warnMode = Boolean(args['--sources'] && args['--specs'])
 const changedMode = Boolean(warnMode && args['--branch'])
-const specsForTestIdsMode = Boolean(args['--test-ids'] && args['--specs'])
+const specsForTestIdsMode = Boolean(
+  (args['--test-ids'] || args['--test-ids-from-file']) && args['--specs'],
+)
 
 debug('modes %o', {
   useChangedSourceFiles,
@@ -58,12 +62,34 @@ debug('modes %o', {
   verbose,
 })
 
+function getTestIds() {
+  if (args['--test-ids']) {
+    debug('parsing test ids from the command line')
+    return args['--test-ids']
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean)
+  }
+  if (args['--test-ids-from-file']) {
+    debug('reading test ids from the file %s', args['--test-ids-from-file'])
+    const fs = require('fs')
+    const filename = args['--test-ids-from-file']
+    const contents = fs.readFileSync(filename, 'utf-8')
+    return contents
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean)
+  }
+}
+
 if (specsForTestIdsMode) {
   debug('finding specs using the given test ids')
-  const testIds = args['--test-ids']
-    .split(',')
-    .map((s) => s.trim())
-    .filter(Boolean)
+  const testIds = getTestIds()
+  if (!Array.isArray(testIds)) {
+    console.error('Missing test ids')
+    process.exit(1)
+  }
+
   debug('have %d test ids: %s', testIds.length, testIds.join(', '))
   const specFiles = globby.sync(args['--specs'], {
     sort: true,

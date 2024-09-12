@@ -51,6 +51,9 @@ jobs:
       - name: Print unused test ids
         run: npm run demo:unused:ids
 
+      - name: Print unused test ids from file
+        run: npm run demo:unused:ids:from:file
+
   release:
     runs-on: ubuntu-20.04
     needs: test

@@ -79,6 +79,12 @@ $ npm run demo:unused:ids
 lastName,foo,bar
 ```
 
+You can read test ids from a text file, like [ids.txt](./ids.txt). This is useful since there might be a lot of test ids and passing them through the command-line becomes a problem.
+
+```
+$ npx find-ids --specs ... --command ... --test-ids-from-file <filename>
+```
+
 ### Specs to run based on Git changes
 
 You can automatically compute which specs use the test ids from the changed source in the current branch.
