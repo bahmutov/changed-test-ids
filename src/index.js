@@ -122,12 +122,14 @@ function findTestQueries(source, options = {}) {
 
   try {
     ast = babel.parse(source, {
-      plugins: ['typescript'],
+      // we allow JSX when looking at Cypress specs
+      // because these could be component tests
+      plugins: ['typescript', 'jsx'],
       sourceType: 'script',
     })
   } catch (e) {
     ast = babel.parse(source, {
-      plugins: ['typescript'],
+      plugins: ['typescript', 'jsx'],
       sourceType: 'module',
     })
   }
