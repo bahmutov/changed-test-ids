@@ -45,6 +45,7 @@
     "arg": "^5.0.2",
     "debug": "^4.3.4",
     "globby": "^11.1.0",
+    "micromatch": "^4.0.8",
     "pluralize": "^8.0.0",
     "shelljs": "^0.8.5"
   },

@@ -95,6 +95,8 @@ $ npx find-ids --sources ... --specs ... --command ... --branch <compare against
 
 If running on GitHub Actions, you can set the detected spec filenames as outputs by adding `--set-gha-outputs`. This sets the output variables `specsToRun` (comma-separated list of specs) and `specsToRunN` (number of specs found based on test ids in the changed source files).
 
+**Note:** when finding the test ids in the changed source files, we consider the source code _before_ and _after_ the change. For example, imagine in your branch you _delete_ a source file `Buttons.jsx`. We want to check the test ids from that source file against the specs!
+
 ### Test ids based on Git changes
 
 You can simply detect test ids in the changed source files and output their list.
