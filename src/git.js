@@ -5,7 +5,7 @@ const shell = require('shelljs')
 
 /**
  * Finds files changed or added in the current branch when compared to the "origin/branch".
- * Returns a list of filenames. If there are no files, returns an empty list.
+ * Returns a list of filenames + source file contents (before and after). If there are no files, returns an empty list.
  * @param {string} branch The branch to compare against.
  * @param {boolean} useParent Determine the changes only against the parent commit.
  */
@@ -28,6 +28,8 @@ function findChangedFiles(branch, useParent = false) {
     Boolean(useParent),
   )
 
+  // find all added / changed / moved / renamed / deleted source files
+  // A: added, M: modified, R: renamed, D: deleted
   if (useParent) {
     let result = shell.exec(`git merge-base origin/${branch} HEAD`, {
       silent: true,
@@ -39,7 +41,7 @@ function findChangedFiles(branch, useParent = false) {
 
     const commit = result.stdout.trim()
     debugGit('merge commit with branch "%s" is %s', branch, commit)
-    result = shell.exec(`git diff --name-only --diff-filter=AMR ${commit}..`, {
+    result = shell.exec(`git diff --name-only --diff-filter=AMRD ${commit}..`, {
       silent: true,
     })
     if (result.code !== 0) {
@@ -56,9 +58,20 @@ function findChangedFiles(branch, useParent = false) {
       filenames.length,
       branch,
     )
-    return filenames
+
+    const fileContents = filenames.map((filename) => {
+      const before = shell.exec(`git show ${commit}:${filename}`, {
+        silent: true,
+      }).stdout
+      const after = shell.exec(`git show HEAD:${filename}`, {
+        silent: true,
+      }).stdout
+      return { filename, before, after }
+    })
+
+    return fileContents
   } else {
-    const command = `git diff --name-only --diff-filter=AMR origin/${branch}`
+    const command = `git diff --name-only --diff-filter=AMRD origin/${branch}`
     debugGit('command: %s', command)
 
     const result = shell.exec(command, { silent: true })
@@ -76,7 +89,18 @@ function findChangedFiles(branch, useParent = false) {
       filenames.length,
       pluralize('file', filenames.length),
     )
-    return filenames
+
+    const fileContents = filenames.map((filename) => {
+      const before = shell.exec(`git show origin/${branch}:${filename}`, {
+        silent: true,
+      }).stdout
+      const after = shell.exec(`git show HEAD:${filename}`, {
+        silent: true,
+      }).stdout
+      return { filename, before, after }
+    })
+
+    return fileContents
   }
 }
 

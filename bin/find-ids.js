@@ -7,6 +7,7 @@ const {
   findTestAttributesInFiles,
   findTestQueriesInFiles,
   findTestQueriesInFile,
+  findTestAttributesInChangedSourceFiles,
 } = require('../src')
 const { findChangedFiles } = require('../src/git')
 const core = require('@actions/core')
@@ -210,20 +211,30 @@ if (specsForTestIdsMode) {
     }
   }
 } else if (useChangedSourceFiles) {
-  const changedFiles = findChangedFiles(args['--branch'], args['--parent'])
-  debug('%d changed files %s', changedFiles.length, changedFiles.join(', '))
-  const sourceFiles = globby.sync(args['--sources'], {
-    sort: true,
-  })
-  const changedSourceFiles = changedFiles.filter((filename) =>
-    sourceFiles.includes(filename),
+  const changedFilesContents = findChangedFiles(
+    args['--branch'],
+    args['--parent'],
   )
   debug(
-    '%d changed source files %s',
-    changedSourceFiles.length,
-    changedSourceFiles.join(', '),
+    '%d changed files %s',
+    changedFilesContents.length,
+    changedFilesContents.map((x) => x.filename).join(', '),
   )
-  const testIds = findTestAttributesInFiles(changedSourceFiles)
+  // check the changed files against the source files
+  // using minimatch?
+
+  // const sourceFiles = globby.sync(args['--sources'], {
+  //   sort: true,
+  // })
+  // const changedSourceFiles = changedFiles.filter((filename) =>
+  //   sourceFiles.includes(filename),
+  // )
+  // debug(
+  //   '%d changed source files %s',
+  //   changedSourceFiles.length,
+  //   changedSourceFiles.join(', '),
+  // )
+  const testIds = findTestAttributesInChangedSourceFiles(changedFilesContents)
   if (!testIds.length) {
     console.log('no test ids detected')
     if (args['--set-gha-outputs']) {
@@ -236,8 +247,9 @@ if (specsForTestIdsMode) {
         .addHeading('changed-test-ids')
         .addTable([
           ['Parent branch', args['--branch']],
-          ['Changed files', String(changedFiles.length)],
-          ['Changed source files', String(changedSourceFiles.length)],
+          ['Changed files', String(changedFilesContents.length)],
+          // TODO: filter the changed files to only source files
+          ['Changed source files', String(changedFilesContents.length)],
           ['Changed test ids', String(testIds.length)],
         ])
         .addLink(
@@ -250,7 +262,7 @@ if (specsForTestIdsMode) {
     debug(
       'found %d test ids across %d changed source files',
       testIds.length,
-      changedSourceFiles.length,
+      changedFilesContents.length,
     )
 
     if (args['--specs']) {
