@@ -195,6 +195,28 @@ function findTestAttributesInFiles(filenames) {
 }
 
 /**
+ * Finds data test ids used in JSX source file before and after source change.
+ * The attributes are unique and alphabetically sorted
+ * @param {string[]} filenames The filenames to read
+ */
+function findTestAttributesInChangedSourceFiles(changedSources) {
+  const names = new Set()
+  changedSources.forEach((changedSource) => {
+    let ids = findTestAttributes(changedSource.before)
+    ids.forEach((testId) => {
+      names.add(testId)
+    })
+
+    ids = findTestAttributes(changedSource.after)
+    ids.forEach((testId) => {
+      names.add(testId)
+    })
+  })
+  const ids = [...names].sort()
+  return ids
+}
+
+/**
  * Finds data test ids used in the Cypress spec file
  * @param {string} filename The filename to read
  * @param {FindQueriesOptions} options Options controlling what to look for
@@ -244,4 +266,5 @@ module.exports = {
   findTestAttributes,
   findTestAttributesInFile,
   findTestAttributesInFiles,
+  findTestAttributesInChangedSourceFiles,
 }

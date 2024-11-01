@@ -3,10 +3,12 @@
 const arg = require('arg')
 const debug = require('debug')('changed-test-ids')
 const globby = require('globby')
+const micromatch = require('micromatch')
 const {
   findTestAttributesInFiles,
   findTestQueriesInFiles,
   findTestQueriesInFile,
+  findTestAttributesInChangedSourceFiles,
 } = require('../src')
 const { findChangedFiles } = require('../src/git')
 const core = require('@actions/core')
@@ -210,20 +212,27 @@ if (specsForTestIdsMode) {
     }
   }
 } else if (useChangedSourceFiles) {
-  const changedFiles = findChangedFiles(args['--branch'], args['--parent'])
-  debug('%d changed files %s', changedFiles.length, changedFiles.join(', '))
-  const sourceFiles = globby.sync(args['--sources'], {
-    sort: true,
-  })
-  const changedSourceFiles = changedFiles.filter((filename) =>
-    sourceFiles.includes(filename),
+  const changedFilesContents = findChangedFiles(
+    args['--branch'],
+    args['--parent'],
   )
   debug(
-    '%d changed source files %s',
-    changedSourceFiles.length,
-    changedSourceFiles.join(', '),
+    '%d changed files %s',
+    changedFilesContents.length,
+    changedFilesContents.map((x) => x.filename).join(', '),
   )
-  const testIds = findTestAttributesInFiles(changedSourceFiles)
+  // check the changed files against the source files using minimatch
+  const changedSourceFiles = changedFilesContents.filter((sourceFile) => {
+    return micromatch.isMatch(sourceFile.filename, args['--sources'])
+  })
+
+  debug(
+    '%d changed source files against pattern "%s": %s',
+    changedSourceFiles.length,
+    args['--sources'],
+    changedSourceFiles.map((x) => x.filename).join(', '),
+  )
+  const testIds = findTestAttributesInChangedSourceFiles(changedSourceFiles)
   if (!testIds.length) {
     console.log('no test ids detected')
     if (args['--set-gha-outputs']) {
@@ -236,7 +245,7 @@ if (specsForTestIdsMode) {
         .addHeading('changed-test-ids')
         .addTable([
           ['Parent branch', args['--branch']],
-          ['Changed files', String(changedFiles.length)],
+          ['Changed files', String(changedFilesContents.length)],
           ['Changed source files', String(changedSourceFiles.length)],
           ['Changed test ids', String(testIds.length)],
         ])
