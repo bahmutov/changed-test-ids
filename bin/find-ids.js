@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+// @ts-check
+
 const arg = require('arg')
 const debug = require('debug')('changed-test-ids')
 const globby = require('globby')
@@ -329,7 +331,7 @@ if (specsForTestIdsMode) {
             .addHeading('Test Ids In Changed Source Files')
             .addTable([
               ['Parent branch', args['--branch']],
-              ['Changed files', String(changedFiles.length)],
+              ['Changed files', String(changedFilesContents.length)],
               ['Changed source files', String(changedSourceFiles.length)],
               ['Changed test ids N', String(testIds.length)],
               [
