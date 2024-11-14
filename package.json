@@ -39,9 +39,9 @@
   },
   "dependencies": {
     "@actions/core": "^1.10.1",
-    "@babel/core": "^7.23.0",
-    "@babel/parser": "^7.23.0",
-    "@babel/plugin-syntax-jsx": "^7.22.5",
+    "@babel/core": "^7.26.0",
+    "@babel/parser": "^7.26.2",
+    "@babel/plugin-syntax-jsx": "^7.25.9",
     "arg": "^5.0.2",
     "debug": "^4.3.4",
     "globby": "^11.1.0",
