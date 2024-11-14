@@ -61,10 +61,19 @@ function findTestAttributes(source, options = {}) {
       sourceType: 'script',
     })
   } catch (e) {
-    ast = babel.parse(source, {
-      plugins: ['jsx', 'typescript'],
-      sourceType: 'module',
-    })
+    try {
+      ast = babel.parse(source, {
+        plugins: ['jsx', 'typescript'],
+        sourceType: 'module',
+      })
+    } catch (e) {
+      if (options.filename) {
+        console.error('parse error in file %s', options.filename)
+      } else {
+        debug('parse error in source code')
+      }
+      return []
+    }
   }
 
   const attributes = [
@@ -77,30 +86,39 @@ function findTestAttributes(source, options = {}) {
     'dataTestId',
     ...(options.attributes || []),
   ]
-  debug('test attributes to find', attributes)
+  // debug('test attributes to find', attributes)
 
   const testIds = []
 
-  traverse(ast, {
-    JSXElement(a) {
-      // debug('JSXElement')
-      // debug(a.node.openingElement.attributes)
-      a.node.openingElement.attributes.forEach((node) => {
-        if (isTestAttributeNode(attributes, node)) {
-          if (node.value.type === 'StringLiteral') {
-            const testId = node.value.value
-            debug('found test id "%s"', testId)
-            testIds.push(testId)
-          } else {
-            debug(
-              'skipping non-string literal for attribute "%s"',
-              node.name.name,
-            )
+  try {
+    traverse(ast, {
+      JSXElement(a) {
+        // debug('JSXElement')
+        // debug(a.node.openingElement.attributes)
+        a.node.openingElement.attributes.forEach((node) => {
+          if (isTestAttributeNode(attributes, node)) {
+            if (node.value.type === 'StringLiteral') {
+              const testId = node.value.value
+              debug('found test id "%s"', testId)
+              testIds.push(testId)
+            } else {
+              debug(
+                'skipping non-string literal for attribute "%s"',
+                node.name.name,
+              )
+            }
           }
-        }
-      })
-    },
-  })
+        })
+      },
+    })
+  } catch (e) {
+    if (options.filename) {
+      console.error('parse error in file %s', options.filename)
+    } else {
+      debug('parse error in source code')
+    }
+    return []
+  }
 
   return testIds.sort()
 }
@@ -170,7 +188,7 @@ function findTestAttributesInFile(filename) {
   const source = fs.readFileSync(filename, 'utf8')
 
   try {
-    return findTestAttributes(source)
+    return findTestAttributes(source, { filename })
   } catch (e) {
     debug('⚠️ could not parse source code in file %s', filename)
     return []
@@ -202,12 +220,16 @@ function findTestAttributesInFiles(filenames) {
 function findTestAttributesInChangedSourceFiles(changedSources) {
   const names = new Set()
   changedSources.forEach((changedSource) => {
-    let ids = findTestAttributes(changedSource.before)
+    let ids = findTestAttributes(changedSource.before, {
+      filename: changedSource.filename,
+    })
     ids.forEach((testId) => {
       names.add(testId)
     })
 
-    ids = findTestAttributes(changedSource.after)
+    ids = findTestAttributes(changedSource.after, {
+      filename: changedSource.filename,
+    })
     ids.forEach((testId) => {
       names.add(testId)
     })
