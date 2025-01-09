@@ -113,7 +113,10 @@ function findTestAttributes(source, options = {}) {
     })
   } catch (e) {
     if (options.filename) {
-      console.error('parse error in file %s', options.filename)
+      console.error(
+        'finding test attributes: parse error in file %s',
+        options.filename,
+      )
     } else {
       debug('parse error in source code')
     }
@@ -146,35 +149,54 @@ function findTestQueries(source, options = {}) {
       sourceType: 'script',
     })
   } catch (e) {
-    ast = babel.parse(source, {
-      plugins: ['typescript', 'jsx'],
-      sourceType: 'module',
-    })
+    try {
+      ast = babel.parse(source, {
+        plugins: ['typescript', 'jsx'],
+        sourceType: 'module',
+      })
+    } catch (e) {
+      debug('another parse error in source code')
+      if (options.filename) {
+        console.error('parse error in file %s', options.filename)
+      }
+      return []
+    }
   }
 
   const queryCommands = [...(options.commands || [])]
   debug('query commands to find', queryCommands)
 
-  traverse(ast, {
-    CallExpression(a) {
-      // debug('CallExpression')
-      if (isCyQueryCommandExpression(a.node)) {
-        debug('it is a cy built-in query command')
-        if (isCyTestAttributeSelector(a.node.arguments[0])) {
-          const testId = extractTestId(a.node.arguments[0].value)
-          debug('found query test id "%s"', testId)
-          testIds.push(testId)
+  try {
+    traverse(ast, {
+      CallExpression(a) {
+        // debug('CallExpression')
+        if (isCyQueryCommandExpression(a.node)) {
+          debug('it is a cy built-in query command')
+          if (isCyTestAttributeSelector(a.node.arguments[0])) {
+            const testId = extractTestId(a.node.arguments[0].value)
+            debug('found query test id "%s"', testId)
+            testIds.push(testId)
+          }
+        } else if (isCyCustomQueryExpression(queryCommands, a.node)) {
+          debug('it is a custom query command')
+          if (a.node.arguments[0].type === 'StringLiteral') {
+            const testId = a.node.arguments[0].value
+            debug('found query test id "%s"', testId)
+            testIds.push(testId)
+          }
         }
-      } else if (isCyCustomQueryExpression(queryCommands, a.node)) {
-        debug('it is a custom query command')
-        if (a.node.arguments[0].type === 'StringLiteral') {
-          const testId = a.node.arguments[0].value
-          debug('found query test id "%s"', testId)
-          testIds.push(testId)
-        }
-      }
-    },
-  })
+      },
+    })
+  } catch (e) {
+    debug('problem traversing the source code')
+    if (options.filename) {
+      console.error(
+        'problem traversing the source code in file %s',
+        options.filename,
+      )
+    }
+    return []
+  }
 
   return testIds.sort()
 }
