@@ -85,7 +85,7 @@ You can read test ids from a text file, like [ids.txt](./ids.txt). This is usefu
 $ npx find-ids --specs ... --command ... --test-ids-from-file <filename>
 ```
 
-Sometimes the codebase has components that are deprecated and are not going to be tested. You can load the list of "ignored" test ids from a file (comma-separated)
+Sometimes the codebase has components that are deprecated and are not going to be tested. You can load the list of "ignored" test ids from a file (comma-separated, can have multiple lines, lines starting with `#` are treated as comments)
 
 ```
 $ npx find-ids --specs ... --command ... --test-ids-from-file <filename1> --ignore-test-ids-from-file <filename2>

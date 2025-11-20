@@ -1,2 +1,6 @@
+# these are comment lines
+# you can have multiple lines with component test ids
+# old component, no longer used
 foo,
 bar
+baz,hello
