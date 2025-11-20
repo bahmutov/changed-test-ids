@@ -3,11 +3,11 @@ on: [push]
 
 jobs:
   test:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         # https://github.com/actions/checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           # we need multiple branches
           # in order to detect Git changes
@@ -58,12 +58,12 @@ jobs:
         run: npm run demo:unused:ids:from:file:with:ignored
 
   release:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     needs: test
     if: github.ref == 'refs/heads/main'
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - uses: bahmutov/npm-install@v1
 
