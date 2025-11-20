@@ -23,7 +23,8 @@
     "demo:changed:ids": "DEBUG=changed-test-ids node ./bin/find-ids --branch main --sources 'tests/fixtures/*.jsx'",
     "demo:ids:specs": "DEBUG=changed-test-ids node ./bin/find-ids --test-ids greeting,lastName --specs 'tests/fixtures/*.cy.js' --command getTest,findById",
     "demo:unused:ids": "node ./bin/find-ids --test-ids greeting,lastName,foo,bar --specs 'tests/fixtures/*.cy.js' --command getTest,findById --unused",
-    "demo:unused:ids:from:file": "node ./bin/find-ids --test-ids-from-file ids.txt --specs 'tests/fixtures/*.cy.js' --command getTest,findById --unused"
+    "demo:unused:ids:from:file": "node ./bin/find-ids --test-ids-from-file ids.txt --specs 'tests/fixtures/*.cy.js' --command getTest,findById --unused",
+    "demo:unused:ids:from:file:with:ignored": "node ./bin/find-ids --test-ids-from-file ids.txt --specs 'tests/fixtures/*.cy.js' --command getTest,findById --unused --ignore-test-ids-from-file ignored-ids.txt"
   },
   "keywords": [
     "cypress-plugin",
