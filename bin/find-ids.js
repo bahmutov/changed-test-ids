@@ -14,6 +14,7 @@ const {
   findTestAttributesInChangedSourceFiles,
 } = require('../src')
 const { findChangedFiles } = require('../src/git')
+const { readIgnoredTestIds } = require('../src/utils')
 const core = require('@actions/core')
 
 const args = arg({
@@ -70,25 +71,7 @@ debug('modes %o', {
 })
 
 function getTestIds() {
-  const ignoredTestIds = new Set()
-  if (args['--ignore-test-ids-from-file']) {
-    debug(
-      'reading ignored test ids from file %s',
-      args['--ignore-test-ids-from-file'],
-    )
-    const filename = args['--ignore-test-ids-from-file']
-    const contents = fs.readFileSync(filename, 'utf-8')
-    contents
-      .split(',')
-      .map((s) => s.trim())
-      .filter(Boolean)
-      .forEach((testId) => ignoredTestIds.add(testId))
-    debug(
-      'have %d ignored test ids: %s',
-      ignoredTestIds.size,
-      Array.from(ignoredTestIds).join(', '),
-    )
-  }
+  const ignoredTestIds = readIgnoredTestIds(args['--ignore-test-ids-from-file'])
 
   if (args['--test-ids']) {
     debug('parsing test ids from the command line')
