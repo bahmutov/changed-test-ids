@@ -5,6 +5,7 @@
 const arg = require('arg')
 const debug = require('debug')('changed-test-ids')
 const globby = require('globby')
+const fs = require('fs')
 const micromatch = require('micromatch')
 const {
   findTestAttributesInFiles,
@@ -34,6 +35,8 @@ const args = arg({
   '--test-ids': String,
   // read test ids from the given text file (comma-separated list)
   '--test-ids-from-file': String,
+  // ignore test ids listed in this file
+  '--ignore-test-ids-from-file': String,
   // output additional information
   '--verbose': Boolean,
   // output found test ids using comma-separated list
@@ -67,22 +70,43 @@ debug('modes %o', {
 })
 
 function getTestIds() {
+  const ignoredTestIds = new Set()
+  if (args['--ignore-test-ids-from-file']) {
+    debug(
+      'reading ignored test ids from file %s',
+      args['--ignore-test-ids-from-file'],
+    )
+    const filename = args['--ignore-test-ids-from-file']
+    const contents = fs.readFileSync(filename, 'utf-8')
+    contents
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean)
+      .forEach((testId) => ignoredTestIds.add(testId))
+    debug(
+      'have %d ignored test ids: %s',
+      ignoredTestIds.size,
+      Array.from(ignoredTestIds).join(', '),
+    )
+  }
+
   if (args['--test-ids']) {
     debug('parsing test ids from the command line')
     return args['--test-ids']
       .split(',')
       .map((s) => s.trim())
       .filter(Boolean)
+      .filter((testId) => !ignoredTestIds.has(testId))
   }
   if (args['--test-ids-from-file']) {
     debug('reading test ids from the file %s', args['--test-ids-from-file'])
-    const fs = require('fs')
     const filename = args['--test-ids-from-file']
     const contents = fs.readFileSync(filename, 'utf-8')
     return contents
       .split(',')
       .map((s) => s.trim())
       .filter(Boolean)
+      .filter((testId) => !ignoredTestIds.has(testId))
   }
 }
 
